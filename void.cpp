@@ -20,13 +20,13 @@
 using namespace std;
 
 int divUp(int x, int y)
-{// идея была такая (x + y - 1) / y
-	//если мы добавим делитель к знамнателю и поделим на делитель, то по сравнению с прошлым результатом тут добавится единица
-	// то есть, если добавить числителю делитель на 1 меньше, то результату добавится число всегда меньшее единице, но достаточное, чтобы округлить вверх
-	return (x - 1) / y + 1;// упрощённая форма
+{// ГЁГ¤ГҐГї ГЎГ»Г«Г  ГІГ ГЄГ Гї (x + y - 1) / y
+	//ГҐГ±Г«ГЁ Г¬Г» Г¤Г®ГЎГ ГўГЁГ¬ Г¤ГҐГ«ГЁГІГҐГ«Гј ГЄ Г§Г­Г Г¬Г­Г ГІГҐГ«Гѕ ГЁ ГЇГ®Г¤ГҐГ«ГЁГ¬ Г­Г  Г¤ГҐГ«ГЁГІГҐГ«Гј, ГІГ® ГЇГ® Г±Г°Г ГўГ­ГҐГ­ГЁГѕ Г± ГЇГ°Г®ГёГ«Г»Г¬ Г°ГҐГ§ГіГ«ГјГІГ ГІГ®Г¬ ГІГіГІ Г¤Г®ГЎГ ГўГЁГІГ±Гї ГҐГ¤ГЁГ­ГЁГ¶Г 
+	// ГІГ® ГҐГ±ГІГј, ГҐГ±Г«ГЁ Г¤Г®ГЎГ ГўГЁГІГј Г·ГЁГ±Г«ГЁГІГҐГ«Гѕ Г¤ГҐГ«ГЁГІГҐГ«Гј Г­Г  1 Г¬ГҐГ­ГјГёГҐ, ГІГ® Г°ГҐГ§ГіГ«ГјГІГ ГІГі Г¤Г®ГЎГ ГўГЁГІГ±Гї Г·ГЁГ±Г«Г® ГўГ±ГҐГЈГ¤Г  Г¬ГҐГ­ГјГёГҐГҐ ГҐГ¤ГЁГ­ГЁГ¶ГҐ, Г­Г® Г¤Г®Г±ГІГ ГІГ®Г·Г­Г®ГҐ, Г·ГІГ®ГЎГ» Г®ГЄГ°ГіГЈГ«ГЁГІГј ГўГўГҐГ°Гµ
+	return (x - 1) / y + 1;// ГіГЇГ°Г®Г№ВёГ­Г­Г Гї ГґГ®Г°Г¬Г 
 }
 
-// 1. Преобразование RGB в YCbCr
+// 1. ГЏГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ RGB Гў YCbCr
 using inputArray = vector<vector<int16_t>>;
 
 void rgb_to_ycbcr(int height, int width
@@ -67,10 +67,10 @@ void ycbcr_to_rgb(int height, int width
 	}
 }
 
-// 2. Даунсэмплинг 4:2:0 (применяется к Cb и Cr)
+// 2. Г„Г ГіГ­Г±ГЅГ¬ГЇГ«ГЁГ­ГЈ 4:2:0 (ГЇГ°ГЁГ¬ГҐГ­ГїГҐГІГ±Гї ГЄ Cb ГЁ Cr)
 inputArray downsample(int height, int width, const inputArray& c);
 
-// 3. Разбиение изображения на блоки NxN
+// 3. ГђГ Г§ГЎГЁГҐГ­ГЁГҐ ГЁГ§Г®ГЎГ°Г Г¦ГҐГ­ГЁГї Г­Г  ГЎГ«Г®ГЄГЁ NxN
 // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
 #include <array>
 
@@ -79,19 +79,19 @@ using i16_Block8x8 = array<array<int16_t, N>, N>;
 
 vector<i16_Block8x8> splitInto8x8Blocks(int height, int width, const inputArray& Y_Cb_Cr);
 
-// 4.1 Прямое DCT-II преобразование для блока NxN
+// 4.1 ГЏГ°ГїГ¬Г®ГҐ DCT-II ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ Г¤Г«Гї ГЎГ«Г®ГЄГ  NxN
 // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-// Предварительно вычисленные константы для DCT-II 8x8
+// ГЏГ°ГҐГ¤ГўГ Г°ГЁГІГҐГ«ГјГ­Г® ГўГ»Г·ГЁГ±Г«ГҐГ­Г­Г»ГҐ ГЄГ®Г­Г±ГІГ Г­ГІГ» Г¤Г«Гї DCT-II 8x8
 constexpr double PI = 3.14159265358979323846;
 constexpr double SQRT2 = 1.41421356237309504880; // sqrt(2)
 
-// Коэффициенты масштабирования для DCT-II
+// ГЉГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» Г¬Г Г±ГёГІГ ГЎГЁГ°Г®ГўГ Г­ГЁГї Г¤Г«Гї DCT-II
 constexpr double C0 = 1.0 / SQRT2;
 constexpr double C1 = 1.0;
 
 using d_Block8x8 = array<array<double, N>, N>;
 
-// Таблица косинусов для ускорения вычислений
+// Г’Г ГЎГ«ГЁГ¶Г  ГЄГ®Г±ГЁГ­ГіГ±Г®Гў Г¤Г«Гї ГіГ±ГЄГ®Г°ГҐГ­ГЁГї ГўГ»Г·ГЁГ±Г«ГҐГ­ГЁГ©
 d_Block8x8 precompute_cos_table() {
 	d_Block8x8 cos_table;
 	for (int u = 0; u < N; u++) {
@@ -104,7 +104,7 @@ d_Block8x8 precompute_cos_table() {
 
 const auto COS_TABLE = precompute_cos_table();
 
-// 1D DCT-II для строки/столбца
+// 1D DCT-II Г¤Г«Гї Г±ГІГ°Г®ГЄГЁ/Г±ГІГ®Г«ГЎГ¶Г 
 void dct_1d(const array<double, N>& input, array<double, N>& output) {
 	for (int u = 0; u < N; u++) {
 		double sum = 0.0;
@@ -112,16 +112,16 @@ void dct_1d(const array<double, N>& input, array<double, N>& output) {
 		for (int x = 0; x < N; x++) {
 			sum += input[x] * COS_TABLE[u][x];
 		}
-		output[u] = sum * cu * 0.5; // Нормализация
+		output[u] = sum * cu * 0.5; // ГЌГ®Г°Г¬Г Г«ГЁГ§Г Г¶ГЁГї
 	}
 }
 
-// 2D DCT-II для блока 8x8
+// 2D DCT-II Г¤Г«Гї ГЎГ«Г®ГЄГ  8x8
 d_Block8x8 dct_2d_8x8(const i16_Block8x8& block) {
 	d_Block8x8 temp;
 	d_Block8x8 coeffs;
 
-	// Применяем 1D DCT к каждой строке (горизонтальное преобразование)
+	// ГЏГ°ГЁГ¬ГҐГ­ГїГҐГ¬ 1D DCT ГЄ ГЄГ Г¦Г¤Г®Г© Г±ГІГ°Г®ГЄГҐ (ГЈГ®Г°ГЁГ§Г®Г­ГІГ Г«ГјГ­Г®ГҐ ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ)
 	for (int y = 0; y < N; y++) {
 		array<double, N> row;
 		for (int x = 0; x < N; x++) {
@@ -132,7 +132,7 @@ d_Block8x8 dct_2d_8x8(const i16_Block8x8& block) {
 		temp[y] = dct_row;
 	}
 
-	// Применяем 1D DCT к каждому столбцу (вертикальное преобразование)
+	// ГЏГ°ГЁГ¬ГҐГ­ГїГҐГ¬ 1D DCT ГЄ ГЄГ Г¦Г¤Г®Г¬Гі Г±ГІГ®Г«ГЎГ¶Гі (ГўГҐГ°ГІГЁГЄГ Г«ГјГ­Г®ГҐ ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ)
 	for (int u = 0; u < N; u++) {
 		array<double, N> column{};
 		for (int y = 0; y < N; y++) {
@@ -148,9 +148,9 @@ d_Block8x8 dct_2d_8x8(const i16_Block8x8& block) {
 	return coeffs;
 }
 
-// 4.2 Обратное DCT-II преобразование для блока NxN
+// 4.2 ГЋГЎГ°Г ГІГ­Г®ГҐ DCT-II ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ Г¤Г«Гї ГЎГ«Г®ГЄГ  NxN
 // VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV
-// 1D DCT-III обратное преобразование для строки/столбца
+// 1D DCT-III Г®ГЎГ°Г ГІГ­Г®ГҐ ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ Г¤Г«Гї Г±ГІГ°Г®ГЄГЁ/Г±ГІГ®Г«ГЎГ¶Г 
 void idct_1d(const array<double, N>& input, array<double, N>& output) {
 	for (int x = 0; x < N; x++) {
 		double sum = 0.0;
@@ -158,16 +158,16 @@ void idct_1d(const array<double, N>& input, array<double, N>& output) {
 			double cu = (u == 0) ? C0 : C1;
 			sum += cu * input[u] * COS_TABLE[u][x];
 		}
-		output[x] = sum * 0.5; // Нормализация
+		output[x] = sum * 0.5; // ГЌГ®Г°Г¬Г Г«ГЁГ§Г Г¶ГЁГї
 	}
 }
 
-// 2D IDCT для блока 8x8
+// 2D IDCT Г¤Г«Гї ГЎГ«Г®ГЄГ  8x8
 i16_Block8x8 idct_2d_8x8(const d_Block8x8& coeffs) {
 	d_Block8x8 temp;
 	i16_Block8x8 block;
 
-	// Применяем 1D IDCT к каждому столбцу (вертикальное преобразование)
+	// ГЏГ°ГЁГ¬ГҐГ­ГїГҐГ¬ 1D IDCT ГЄ ГЄГ Г¦Г¤Г®Г¬Гі Г±ГІГ®Г«ГЎГ¶Гі (ГўГҐГ°ГІГЁГЄГ Г«ГјГ­Г®ГҐ ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ)
 	for (int u = 0; u < N; u++) {
 		array<double, N> column{};
 		for (int v = 0; v < N; v++) {
@@ -180,7 +180,7 @@ i16_Block8x8 idct_2d_8x8(const d_Block8x8& coeffs) {
 		}
 	}
 
-	// Применяем 1D IDCT к каждой строке (горизонтальное преобразование)
+	// ГЏГ°ГЁГ¬ГҐГ­ГїГҐГ¬ 1D IDCT ГЄ ГЄГ Г¦Г¤Г®Г© Г±ГІГ°Г®ГЄГҐ (ГЈГ®Г°ГЁГ§Г®Г­ГІГ Г«ГјГ­Г®ГҐ ГЇГ°ГҐГ®ГЎГ°Г Г§Г®ГўГ Г­ГЁГҐ)
 	for (int y = 0; y < N; y++) {
 		array<double, N> row{};
 		for (int u = 0; u < N; u++) {
@@ -196,9 +196,9 @@ i16_Block8x8 idct_2d_8x8(const d_Block8x8& coeffs) {
 	return block;
 }
 
-// 5. Генерация матрицы квантования для заданного уровня качества
-// Annex K стандарт JPEG (ISO/IEC 10918-1) : 1993(E)
-// Стандартная матрица квантования Y для качества 50
+// 5. ГѓГҐГ­ГҐГ°Г Г¶ГЁГї Г¬Г ГІГ°ГЁГ¶Г» ГЄГўГ Г­ГІГ®ГўГ Г­ГЁГї Г¤Г«Гї Г§Г Г¤Г Г­Г­Г®ГЈГ® ГіГ°Г®ГўГ­Гї ГЄГ Г·ГҐГ±ГІГўГ 
+// Annex K Г±ГІГ Г­Г¤Г Г°ГІ JPEG (ISO/IEC 10918-1) : 1993(E)
+// Г‘ГІГ Г­Г¤Г Г°ГІГ­Г Гї Г¬Г ГІГ°ГЁГ¶Г  ГЄГўГ Г­ГІГ®ГўГ Г­ГЁГї Y Г¤Г«Гї ГЄГ Г·ГҐГ±ГІГўГ  50
 constexpr int Luminance_quantization_table[8][8] = {
 	{16, 11, 10, 16, 24, 40, 51, 61},
 	{12, 12, 14, 19, 26, 58, 60, 55},
@@ -209,7 +209,7 @@ constexpr int Luminance_quantization_table[8][8] = {
 	{49, 64, 78, 87, 103, 121, 120, 101},
 	{72, 92, 95, 98, 112, 100, 103, 99}
 };
-// Стандартная матрица квантования Cb и Cr для качества 50
+// Г‘ГІГ Г­Г¤Г Г°ГІГ­Г Гї Г¬Г ГІГ°ГЁГ¶Г  ГЄГўГ Г­ГІГ®ГўГ Г­ГЁГї Cb ГЁ Cr Г¤Г«Гї ГЄГ Г·ГҐГ±ГІГўГ  50
 constexpr int Chrominance_quantization_table[8][8] = {
 	{17, 18, 24, 47, 99, 99, 99, 99},
 	{18, 21, 26, 66, 99, 99, 99, 99},
@@ -222,19 +222,19 @@ constexpr int Chrominance_quantization_table[8][8] = {
 };
 
 void generate_quantization_matrix(int quality, d_Block8x8& q_matrix, const int (&Quantization_table)[8][8]) {
-	// Корректируем качество (1-100)
+	// ГЉГ®Г°Г°ГҐГЄГІГЁГ°ГіГҐГ¬ ГЄГ Г·ГҐГ±ГІГўГ® (1-100)
 	quality = max(1, min(100, quality));
 
-	// Вычисляем scale_factor
+	// Г‚Г»Г·ГЁГ±Г«ГїГҐГ¬ scale_factor
 	double scaleFactor;
 	if (quality < 50) {
-		scaleFactor = 200.0 / quality;  // Для Q < 50
+		scaleFactor = 200.0 / quality;  // Г„Г«Гї Q < 50
 	}
 	else {
-		scaleFactor = 8 * (1.0 - 0.01 * quality);  // Для Q >= 50
+		scaleFactor = 8 * (1.0 - 0.01 * quality);  // Г„Г«Гї Q >= 50
 	}
 
-	// Масштабируем стандартную матрицу Cb/Cr
+	// ГЊГ Г±ГёГІГ ГЎГЁГ°ГіГҐГ¬ Г±ГІГ Г­Г¤Г Г°ГІГ­ГіГѕ Г¬Г ГІГ°ГЁГ¶Гі Cb/Cr
 	for (int y = 0; y < 8; y++) {
 		for (int x = 0; x < 8; x++) {
 			double q = Quantization_table[y][x] * scaleFactor;
@@ -243,7 +243,7 @@ void generate_quantization_matrix(int quality, d_Block8x8& q_matrix, const int (
 	}
 }
 
-// 6.1 Квантование DCT коэффициентов
+// 6.1 ГЉГўГ Г­ГІГ®ГўГ Г­ГЁГҐ DCT ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў
 void quantize(const d_Block8x8& dct_coeffs, const d_Block8x8& q_matrix, i16_Block8x8& quantized) {
 	for (int y = 0; y < N; y++) {
 		for (int x = 0; x < N; x++) {
@@ -252,7 +252,7 @@ void quantize(const d_Block8x8& dct_coeffs, const d_Block8x8& q_matrix, i16_Bloc
 	}
 }
 
-// 6.2 Обратное квантование (восстановление DCT-коэффициентов)
+// 6.2 ГЋГЎГ°Г ГІГ­Г®ГҐ ГЄГўГ Г­ГІГ®ГўГ Г­ГЁГҐ (ГўГ®Г±Г±ГІГ Г­Г®ГўГ«ГҐГ­ГЁГҐ DCT-ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў)
 d_Block8x8 dequantize(const i16_Block8x8& quantized, const d_Block8x8& q_matrix) {
 	d_Block8x8 dct_coeffs;
 	for (int y = 0; y < N; y++) {
@@ -264,7 +264,7 @@ d_Block8x8 dequantize(const i16_Block8x8& quantized, const d_Block8x8& q_matrix)
 	return dct_coeffs;
 }
 
-// 7.1 Зигзаг-сканирование блока
+// 7.1 Г‡ГЁГЈГ§Г ГЈ-Г±ГЄГ Г­ГЁГ°Г®ГўГ Г­ГЁГҐ ГЎГ«Г®ГЄГ 
 constexpr int zigzag_sequence[64] = {
 	0,
 	1, 8,
@@ -294,7 +294,7 @@ vector<int16_t> zigzag_scan(const i16_Block8x8& block) {
 	return str;
 }
 
-// 7.2 Обратное зигзаг-сканирование блока
+// 7.2 ГЋГЎГ°Г ГІГ­Г®ГҐ Г§ГЁГЈГ§Г ГЈ-Г±ГЄГ Г­ГЁГ°Г®ГўГ Г­ГЁГҐ ГЎГ«Г®ГЄГ 
 i16_Block8x8 inverse_zigzag_scan(const array<int16_t, 64>& str) {
 	i16_Block8x8 block{};
 
@@ -306,8 +306,8 @@ i16_Block8x8 inverse_zigzag_scan(const array<int16_t, 64>& str) {
 	return block;
 }
 
-// после зиг-заг обхода обрабатываем полученный массив с DC и AC коэффициентами.
-// 8.1 Разностное кодирование DC коэффициентов
+// ГЇГ®Г±Г«ГҐ Г§ГЁГЈ-Г§Г ГЈ Г®ГЎГµГ®Г¤Г  Г®ГЎГ°Г ГЎГ ГІГ»ГўГ ГҐГ¬ ГЇГ®Г«ГіГ·ГҐГ­Г­Г»Г© Г¬Г Г±Г±ГЁГў Г± DC ГЁ AC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ Г¬ГЁ.
+// 8.1 ГђГ Г§Г­Г®Г±ГІГ­Г®ГҐ ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГҐ DC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў
 void dc_difference(vector<int16_t>& data) {
 	size_t size = data.size();
 	vector<int16_t> temp(size / 64);
@@ -321,8 +321,8 @@ void dc_difference(vector<int16_t>& data) {
 	}
 }
 
-// 8.2 Обратное разностное кодирование DC коэффициентов
-// ТРЕБУЕТ ПЕРЕДЕЛКИ
+// 8.2 ГЋГЎГ°Г ГІГ­Г®ГҐ Г°Г Г§Г­Г®Г±ГІГ­Г®ГҐ ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГҐ DC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў
+// Г’ГђГ…ГЃГ“Г…Г’ ГЏГ…ГђГ…Г„Г…Г‹ГЉГ€
 void reverse_dc_difference(vector<array<int16_t, 64>>& data) {
 	size_t size = data.size();
 
@@ -331,24 +331,24 @@ void reverse_dc_difference(vector<array<int16_t, 64>>& data) {
 	}
 }
 
-// 9. Переменного кодирования разностей DC и AC коэффициентов.
-vector<int16_t> intToBinaryVector(int16_t num, int positive1_or_negative0 = 1/*влияет на биты, будут ли биты инвертивными*/) {
+// 9. ГЏГҐГ°ГҐГ¬ГҐГ­Г­Г®ГЈГ® ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГї Г°Г Г§Г­Г®Г±ГІГҐГ© DC ГЁ AC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў.
+vector<int16_t> intToBinaryVector(int16_t num, int positive1_or_negative0 = 1/*ГўГ«ГЁГїГҐГІ Г­Г  ГЎГЁГІГ», ГЎГіГ¤ГіГІ Г«ГЁ ГЎГЁГІГ» ГЁГ­ГўГҐГ°ГІГЁГўГ­Г»Г¬ГЁ*/) {
 	vector<int16_t> bits;
 
-	if (num == 0) {// это можно удалить по идеи
+	if (num == 0) {// ГЅГІГ® Г¬Г®Г¦Г­Г® ГіГ¤Г Г«ГЁГІГј ГЇГ® ГЁГ¤ГҐГЁ
 		bits.push_back(0);
 		return bits;
 	}
 
 	if (positive1_or_negative0 == 0) num *= -1;
 
-	// Разложение числа на биты
+	// ГђГ Г§Г«Г®Г¦ГҐГ­ГЁГҐ Г·ГЁГ±Г«Г  Г­Г  ГЎГЁГІГ»
 	while (num > 0) {
-		bits.push_back(num % 2 == positive1_or_negative0); // Младший бит
+		bits.push_back(num % 2 == positive1_or_negative0); // ГЊГ«Г Г¤ГёГЁГ© ГЎГЁГІ
 		num /= 2;
 	}
 
-	// Чтобы биты шли в привычном порядке (старший бит первым), развернём вектор
+	// Г—ГІГ®ГЎГ» ГЎГЁГІГ» ГёГ«ГЁ Гў ГЇГ°ГЁГўГ»Г·Г­Г®Г¬ ГЇГ®Г°ГїГ¤ГЄГҐ (Г±ГІГ Г°ГёГЁГ© ГЎГЁГІ ГЇГҐГ°ГўГ»Г¬), Г°Г Г§ГўГҐГ°Г­ВёГ¬ ГўГҐГЄГІГ®Г°
 	reverse(bits.begin(), bits.end());
 
 	return bits;
@@ -356,37 +356,37 @@ vector<int16_t> intToBinaryVector(int16_t num, int positive1_or_negative0 = 1/*в
 
 bool rle_encode_ac(int16_t cur, vector<int16_t>& out_rle, int& zero_count, bool& EOB, bool& ZRL, vector<int16_t>& tempZRL);
 
-// типо продолжение разностного кодирования DC, а также мы кодируем AC
+// ГІГЁГЇГ® ГЇГ°Г®Г¤Г®Г«Г¦ГҐГ­ГЁГҐ Г°Г Г§Г­Г®Г±ГІГ­Г®ГЈГ® ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГї DC, Г  ГІГ ГЄГ¦ГҐ Г¬Г» ГЄГ®Г¤ГЁГ°ГіГҐГ¬ AC
 void preparing_for_coding_dc_and_ac(vector<int16_t>& data) {
 	vector<int16_t> output;
 	output.reserve(data.size());
 
 	dc_difference(data);
 
-	//вся запись будет не побитовой
+	//ГўГ±Гї Г§Г ГЇГЁГ±Гј ГЎГіГ¤ГҐГІ Г­ГҐ ГЇГ®ГЎГЁГІГ®ГўГ®Г©
 	size_t size = data.size();
 
-	for (size_t i = 0; i < size; i += 64)// блок
+	for (size_t i = 0; i < size; i += 64)// ГЎГ«Г®ГЄ
 	{
-		// запись DC
+		// Г§Г ГЇГЁГ±Гј DC
 		vector<int16_t> temp;
 		// {DC coeffs}
 		if (data[i] == 0)
 		{
-			output.push_back(0);// запись КАТЕГОРИИ = 0 без записи кода
+			output.push_back(0);// Г§Г ГЇГЁГ±Гј ГЉГЂГ’Г…ГѓГЋГђГ€Г€ = 0 ГЎГҐГ§ Г§Г ГЇГЁГ±ГЁ ГЄГ®Г¤Г 
 		}
 		else
 		{
 			if (data[i] > 0)
-			{//запись категорий DC и сам DC ввиде бинарного кода в вектор, но запись не на самом деле не бинарная.
+			{//Г§Г ГЇГЁГ±Гј ГЄГ ГІГҐГЈГ®Г°ГЁГ© DC ГЁ Г±Г Г¬ DC ГўГўГЁГ¤ГҐ ГЎГЁГ­Г Г°Г­Г®ГЈГ® ГЄГ®Г¤Г  Гў ГўГҐГЄГІГ®Г°, Г­Г® Г§Г ГЇГЁГ±Гј Г­ГҐ Г­Г  Г±Г Г¬Г®Г¬ Г¤ГҐГ«ГҐ Г­ГҐ ГЎГЁГ­Г Г°Г­Г Гї.
 				temp = intToBinaryVector(data[i], 1);
 			}
 			else
-			{//если число отрицательно, то мы инвертируем его биты
+			{//ГҐГ±Г«ГЁ Г·ГЁГ±Г«Г® Г®ГІГ°ГЁГ¶Г ГІГҐГ«ГјГ­Г®, ГІГ® Г¬Г» ГЁГ­ГўГҐГ°ГІГЁГ°ГіГҐГ¬ ГҐГЈГ® ГЎГЁГІГ»
 				temp = intToBinaryVector(data[i], 0);
 			}
-			output.push_back(static_cast<int16_t>(temp.size()));// запись КАТЕГОРИИ
-			copy(temp.begin(), temp.end(), back_inserter(output));// запись КОДА
+			output.push_back(static_cast<int16_t>(temp.size()));// Г§Г ГЇГЁГ±Гј ГЉГЂГ’Г…ГѓГЋГђГ€Г€
+			copy(temp.begin(), temp.end(), back_inserter(output));// Г§Г ГЇГЁГ±Гј ГЉГЋГ„ГЂ
 		}
 
 
@@ -397,26 +397,26 @@ void preparing_for_coding_dc_and_ac(vector<int16_t>& data) {
 		bool EOB = false;
 		bool ZRL = false;
 		vector<int16_t> tempZRL;
-		for (size_t j = 1; j < 64; j++)// оставшиеся 63 AC коэффициенты блока
-		{// подсчёт нулей и его запись, запись категорий AC с самим коэффициентом и так заного пока не 0,0 (EOB).
+		for (size_t j = 1; j < 64; j++)// Г®Г±ГІГ ГўГёГЁГҐГ±Гї 63 AC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ» ГЎГ«Г®ГЄГ 
+		{// ГЇГ®Г¤Г±Г·ВёГІ Г­ГіГ«ГҐГ© ГЁ ГҐГЈГ® Г§Г ГЇГЁГ±Гј, Г§Г ГЇГЁГ±Гј ГЄГ ГІГҐГЈГ®Г°ГЁГ© AC Г± Г±Г Г¬ГЁГ¬ ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Г¬ ГЁ ГІГ ГЄ Г§Г Г­Г®ГЈГ® ГЇГ®ГЄГ  Г­ГҐ 0,0 (EOB).
 			if (rle_encode_ac(data[j + i], output, zero_count, EOB, ZRL, tempZRL)) continue;
-			// запись НУЛЕЙ AC происхлдит в функции rle_encode_ac
+			// Г§Г ГЇГЁГ±Гј ГЌГ“Г‹Г…Г‰ AC ГЇГ°Г®ГЁГ±ГµГ«Г¤ГЁГІ Гў ГґГіГ­ГЄГ¶ГЁГЁ rle_encode_ac
 
-			// запись AC
+			// Г§Г ГЇГЁГ±Гј AC
 			if (data[j + i] >= 0)
-			{//запись категорий AC и сам AC ввиде бинарного кода в вектор, но запись на самом деле не бинарная.
+			{//Г§Г ГЇГЁГ±Гј ГЄГ ГІГҐГЈГ®Г°ГЁГ© AC ГЁ Г±Г Г¬ AC ГўГўГЁГ¤ГҐ ГЎГЁГ­Г Г°Г­Г®ГЈГ® ГЄГ®Г¤Г  Гў ГўГҐГЄГІГ®Г°, Г­Г® Г§Г ГЇГЁГ±Гј Г­Г  Г±Г Г¬Г®Г¬ Г¤ГҐГ«ГҐ Г­ГҐ ГЎГЁГ­Г Г°Г­Г Гї.
 				temp = intToBinaryVector(data[j + i], 1);
 			}
 			else
-			{//если число отрицательно, то мы инвертируем его биты
+			{//ГҐГ±Г«ГЁ Г·ГЁГ±Г«Г® Г®ГІГ°ГЁГ¶Г ГІГҐГ«ГјГ­Г®, ГІГ® Г¬Г» ГЁГ­ГўГҐГ°ГІГЁГ°ГіГҐГ¬ ГҐГЈГ® ГЎГЁГІГ»
 				temp = intToBinaryVector(data[j + i], 0);
 			}
 
-			output.push_back(static_cast<int16_t>(temp.size()));// запись КАТЕГОРИИ
-			copy(temp.begin(), temp.end(), back_inserter(output));// запись КОДА
+			output.push_back(static_cast<int16_t>(temp.size()));// Г§Г ГЇГЁГ±Гј ГЉГЂГ’Г…ГѓГЋГђГ€Г€
+			copy(temp.begin(), temp.end(), back_inserter(output));// Г§Г ГЇГЁГ±Гј ГЉГЋГ„ГЂ
 		}
 
-		// когда до конца блока все нули
+		// ГЄГ®ГЈГ¤Г  Г¤Г® ГЄГ®Г­Г¶Г  ГЎГ«Г®ГЄГ  ГўГ±ГҐ Г­ГіГ«ГЁ
 		if (EOB)
 		{
 			output.push_back(0);
@@ -427,16 +427,16 @@ void preparing_for_coding_dc_and_ac(vector<int16_t>& data) {
 	data = output;
 }
 
-// 10. RLE кодирование AC коэффициентов
+// 10. RLE ГЄГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГҐ AC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў
 bool rle_encode_ac(int16_t cur, vector<int16_t>& out_rle, int& zero_count, bool& EOB, bool& ZRL, vector<int16_t>& tempZRL) {
 	if (cur == 0)
-	{// попался 0
+	{// ГЇГ®ГЇГ Г«Г±Гї 0
 		zero_count++;
 		EOB = true;
 		if (zero_count == 15)
-		{//ZRL or EOB. Если ZRL то мы не записываем код, т.к. там 0
-			tempZRL.push_back(15);// запись НУЛЕЙ
-			tempZRL.push_back(0);// запись КАТЕГОРИИ
+		{//ZRL or EOB. Г…Г±Г«ГЁ ZRL ГІГ® Г¬Г» Г­ГҐ Г§Г ГЇГЁГ±Г»ГўГ ГҐГ¬ ГЄГ®Г¤, ГІ.ГЄ. ГІГ Г¬ 0
+			tempZRL.push_back(15);// Г§Г ГЇГЁГ±Гј ГЌГ“Г‹Г…Г‰
+			tempZRL.push_back(0);// Г§Г ГЇГЁГ±Гј ГЉГЂГ’Г…ГѓГЋГђГ€Г€
 			zero_count = 0;
 			ZRL = true;
 		}
@@ -446,24 +446,24 @@ bool rle_encode_ac(int16_t cur, vector<int16_t>& out_rle, int& zero_count, bool&
 	{
 		// tempZRL
 		if (ZRL)
-		{// если был ZRL, то он не пустой
-			// запись ZRL
+		{// ГҐГ±Г«ГЁ ГЎГ»Г« ZRL, ГІГ® Г®Г­ Г­ГҐ ГЇГіГ±ГІГ®Г©
+			// Г§Г ГЇГЁГ±Гј ZRL
 			copy(tempZRL.begin(), tempZRL.end(), back_inserter(out_rle));
 
 			tempZRL.clear();
 			ZRL = false;
 		}
 
-		out_rle.push_back(zero_count);// запись НУЛЕЙ AC
+		out_rle.push_back(zero_count);// Г§Г ГЇГЁГ±Гј ГЌГ“Г‹Г…Г‰ AC
 		zero_count = 0;
 		EOB = false;
 		return false;
 	}
 }
 
-// 11. Кодирования разностей  DC коэффициентов и последовательностей  Run/Size  по таблице кодов Хаффмана и упаковки результата в байтовую строку.
-#include <string_view>//C++17 и новее
-// Annex K стандарт JPEG (ISO/IEC 10918-1) : 1993(E)
+// 11. ГЉГ®Г¤ГЁГ°Г®ГўГ Г­ГЁГї Г°Г Г§Г­Г®Г±ГІГҐГ©  DC ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ®Гў ГЁ ГЇГ®Г±Г«ГҐГ¤Г®ГўГ ГІГҐГ«ГјГ­Г®Г±ГІГҐГ©  Run/Size  ГЇГ® ГІГ ГЎГ«ГЁГ¶ГҐ ГЄГ®Г¤Г®Гў Г•Г ГґГґГ¬Г Г­Г  ГЁ ГіГЇГ ГЄГ®ГўГЄГЁ Г°ГҐГ§ГіГ«ГјГІГ ГІГ  Гў ГЎГ Г©ГІГ®ГўГіГѕ Г±ГІГ°Г®ГЄГі.
+#include <string_view>//C++17 ГЁ Г­Г®ГўГҐГҐ
+// Annex K Г±ГІГ Г­Г¤Г Г°ГІ JPEG (ISO/IEC 10918-1) : 1993(E)
 constexpr string_view Luminance_DC_differences[12] = {
 	"00",//0
 	"010",//1
@@ -921,18 +921,18 @@ string HA_encode(const vector<int16_t>& data, const string_view(&DC_differences)
 	for (size_t i = 0; i < size; i++)
 	{
 		// DC
-		encoded += DC_differences[data[i]];// код КАТЕГОРИИ
-		int k_size = data[i];// длина битовой строки
+		encoded += DC_differences[data[i]];// ГЄГ®Г¤ ГЉГЂГ’Г…ГѓГЋГђГ€Г€
+		int k_size = data[i];// Г¤Г«ГЁГ­Г  ГЎГЁГІГ®ГўГ®Г© Г±ГІГ°Г®ГЄГЁ
 
 		for (int k = 0; k < k_size; k++)
-		{// записть кода
+		{// Г§Г ГЇГЁГ±ГІГј ГЄГ®Г¤Г 
 			i++;
 			encoded += to_string(data[i]);
 		}
 
 		// AC
-		int count = 1;// мы уже обработали DC, поэтому 1.
-		while (count < 64)// блок до 64 (последний индекс = 63)
+		int count = 1;// Г¬Г» ГіГ¦ГҐ Г®ГЎГ°Г ГЎГ®ГІГ Г«ГЁ DC, ГЇГ®ГЅГІГ®Г¬Гі 1.
+		while (count < 64)// ГЎГ«Г®ГЄ Г¤Г® 64 (ГЇГ®Г±Г«ГҐГ¤Г­ГЁГ© ГЁГ­Г¤ГҐГЄГ± = 63)
 		{
 			i++;
 
@@ -951,17 +951,17 @@ string HA_encode(const vector<int16_t>& data, const string_view(&DC_differences)
 				continue;
 			}
 
-			count += 1 + data[i];// добавили число + кол нулей в счётчик блока
+			count += 1 + data[i];// Г¤Г®ГЎГ ГўГЁГ«ГЁ Г·ГЁГ±Г«Г® + ГЄГ®Г« Г­ГіГ«ГҐГ© Гў Г±Г·ВёГІГ·ГЁГЄ ГЎГ«Г®ГЄГ 
 			if (count > 64)
 			{
 				bug = true;
 			}
-			encoded += AC[data[i]][data[i + 1]];// запись кода таблицы "кол-во нулей/категория"
+			encoded += AC[data[i]][data[i + 1]];// Г§Г ГЇГЁГ±Гј ГЄГ®Г¤Г  ГІГ ГЎГ«ГЁГ¶Г» "ГЄГ®Г«-ГўГ® Г­ГіГ«ГҐГ©/ГЄГ ГІГҐГЈГ®Г°ГЁГї"
 
 			i++;
 			int k_size = data[i];
 			for (int k = 0; k < k_size; k++)
-			{// записть кода 0/1
+			{// Г§Г ГЇГЁГ±ГІГј ГЄГ®Г¤Г  0/1
 				i++;
 				encoded += to_string(data[i]);
 			}
@@ -982,7 +982,7 @@ string HA_encode(const vector<int16_t>& data, const string_view(&DC_differences)
 	return encoded;
 }
 
-// Упаковка битовой строки в байты
+// Г“ГЇГ ГЄГ®ГўГЄГ  ГЎГЁГІГ®ГўГ®Г© Г±ГІГ°Г®ГЄГЁ Гў ГЎГ Г©ГІГ»
 vector<uint8_t> pack_bits_to_bytes(const string& bit_str) {
 	vector<uint8_t> output;
 	size_t len = bit_str.length();
@@ -992,7 +992,7 @@ vector<uint8_t> pack_bits_to_bytes(const string& bit_str) {
 
 		if (byte_str.length() < 8) {
 			uint8_t zero_bits = 8 - byte_str.length();
-			byte_str.append(zero_bits, '0');// Дополняем нулями
+			byte_str.append(zero_bits, '0');// Г„Г®ГЇГ®Г«Г­ГїГҐГ¬ Г­ГіГ«ГїГ¬ГЁ
 		}
 
 		bitset<8> bits(byte_str);
@@ -1006,67 +1006,67 @@ vector<uint8_t> pack_bits_to_bytes(const string& bit_str) {
 bool writeBMP(const string& filename, const inputArray& r, const inputArray& g, const inputArray& b, int width, int height) {
 	ofstream file(filename, ios::binary);
 	if (!file) {
-		cerr << "Не удалось открыть файл для записи: " << filename << '\n';
+		cerr << "ГЌГҐ ГіГ¤Г Г«Г®Г±Гј Г®ГІГЄГ°Г»ГІГј ГґГ Г©Г« Г¤Г«Гї Г§Г ГЇГЁГ±ГЁ: " << filename << '\n';
 		return false;
 	}
 
-	// Размер файла (54 байта заголовок + 3 * width * height)
+	// ГђГ Г§Г¬ГҐГ° ГґГ Г©Г«Г  (54 ГЎГ Г©ГІГ  Г§Г ГЈГ®Г«Г®ГўГ®ГЄ + 3 * width * height)
 	const int fileSize = 54 + 3 * width * height;
 
-	// Заголовок BMP (14 байт)
+	// Г‡Г ГЈГ®Г«Г®ГўГ®ГЄ BMP (14 ГЎГ Г©ГІ)
 	const uint8_t bmpHeader[14] = {
-		'B', 'M',                                   // Сигнатура
-		static_cast<uint8_t>(fileSize),              // Размер файла (младший байт)
+		'B', 'M',                                   // Г‘ГЁГЈГ­Г ГІГіГ°Г 
+		static_cast<uint8_t>(fileSize),              // ГђГ Г§Г¬ГҐГ° ГґГ Г©Г«Г  (Г¬Г«Г Г¤ГёГЁГ© ГЎГ Г©ГІ)
 		static_cast<uint8_t>(fileSize >> 8),         // ...
 		static_cast<uint8_t>(fileSize >> 16),        // ...
-		static_cast<uint8_t>(fileSize >> 24),        // Старший байт
-		0, 0, 0, 0,                                 // Зарезервировано
-		54, 0, 0, 0                                 // Смещение до данных пикселей (54 байта)
+		static_cast<uint8_t>(fileSize >> 24),        // Г‘ГІГ Г°ГёГЁГ© ГЎГ Г©ГІ
+		0, 0, 0, 0,                                 // Г‡Г Г°ГҐГ§ГҐГ°ГўГЁГ°Г®ГўГ Г­Г®
+		54, 0, 0, 0                                 // Г‘Г¬ГҐГ№ГҐГ­ГЁГҐ Г¤Г® Г¤Г Г­Г­Г»Гµ ГЇГЁГЄГ±ГҐГ«ГҐГ© (54 ГЎГ Г©ГІГ )
 	};
 
-	// Заголовок DIB (40 байт)
+	// Г‡Г ГЈГ®Г«Г®ГўГ®ГЄ DIB (40 ГЎГ Г©ГІ)
 	const uint8_t dibHeader[40] = {
-		40, 0, 0, 0,                                // Размер DIB-заголовка
-		static_cast<uint8_t>(width),                 // Ширина (младший байт)
+		40, 0, 0, 0,                                // ГђГ Г§Г¬ГҐГ° DIB-Г§Г ГЈГ®Г«Г®ГўГЄГ 
+		static_cast<uint8_t>(width),                 // ГГЁГ°ГЁГ­Г  (Г¬Г«Г Г¤ГёГЁГ© ГЎГ Г©ГІ)
 		static_cast<uint8_t>(width >> 8),           // ...
 		static_cast<uint8_t>(width >> 16),          // ...
-		static_cast<uint8_t>(width >> 24),          // Старший байт
-		static_cast<uint8_t>(height),                // Высота
+		static_cast<uint8_t>(width >> 24),          // Г‘ГІГ Г°ГёГЁГ© ГЎГ Г©ГІ
+		static_cast<uint8_t>(height),                // Г‚Г»Г±Г®ГІГ 
 		static_cast<uint8_t>(height >> 8),          // ...
 		static_cast<uint8_t>(height >> 16),         // ...
 		static_cast<uint8_t>(height >> 24),         // ...
-		1, 0,                                       // Количество плоскостей (1)
-		24, 0,                                      // Бит на пиксель (24 = RGB)
-		0, 0, 0, 0,                                 // Сжатие (нет)
-		0, 0, 0, 0,                                 // Размер изображения (можно 0)
-		0, 0, 0, 0,                                 // Горизонтальное разрешение
-		0, 0, 0, 0,                                 // Вертикальное разрешение
-		0, 0, 0, 0,                                 // Палитра (не используется)
-		0, 0, 0, 0                                  // Важные цвета (все)
+		1, 0,                                       // ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЇГ«Г®Г±ГЄГ®Г±ГІГҐГ© (1)
+		24, 0,                                      // ГЃГЁГІ Г­Г  ГЇГЁГЄГ±ГҐГ«Гј (24 = RGB)
+		0, 0, 0, 0,                                 // Г‘Г¦Г ГІГЁГҐ (Г­ГҐГІ)
+		0, 0, 0, 0,                                 // ГђГ Г§Г¬ГҐГ° ГЁГ§Г®ГЎГ°Г Г¦ГҐГ­ГЁГї (Г¬Г®Г¦Г­Г® 0)
+		0, 0, 0, 0,                                 // ГѓГ®Г°ГЁГ§Г®Г­ГІГ Г«ГјГ­Г®ГҐ Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ
+		0, 0, 0, 0,                                 // Г‚ГҐГ°ГІГЁГЄГ Г«ГјГ­Г®ГҐ Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ
+		0, 0, 0, 0,                                 // ГЏГ Г«ГЁГІГ°Г  (Г­ГҐ ГЁГ±ГЇГ®Г«ГјГ§ГіГҐГІГ±Гї)
+		0, 0, 0, 0                                  // Г‚Г Г¦Г­Г»ГҐ Г¶ГўГҐГІГ  (ГўГ±ГҐ)
 	};
 
-	// Записываем заголовки
+	// Г‡Г ГЇГЁГ±Г»ГўГ ГҐГ¬ Г§Г ГЈГ®Г«Г®ГўГЄГЁ
 	file.write(reinterpret_cast<const char*>(bmpHeader), 14);
 	file.write(reinterpret_cast<const char*>(dibHeader), 40);
 
-	// Выравнивание строк (BMP требует, чтобы каждая строка была кратна 4 байтам)
+	// Г‚Г»Г°Г ГўГ­ГЁГўГ Г­ГЁГҐ Г±ГІГ°Г®ГЄ (BMP ГІГ°ГҐГЎГіГҐГІ, Г·ГІГ®ГЎГ» ГЄГ Г¦Г¤Г Гї Г±ГІГ°Г®ГЄГ  ГЎГ»Г«Г  ГЄГ°Г ГІГ­Г  4 ГЎГ Г©ГІГ Г¬)
 	const int padding = (4 - (width * 3) % 4) % 4;
 	const uint8_t padBytes[3] = { 0, 0, 0 };
 
-	// Записываем пиксели (снизу вверх, BGR-порядок)
+	// Г‡Г ГЇГЁГ±Г»ГўГ ГҐГ¬ ГЇГЁГЄГ±ГҐГ«ГЁ (Г±Г­ГЁГ§Гі ГўГўГҐГ°Гµ, BGR-ГЇГ®Г°ГїГ¤Г®ГЄ)
 	for (int y = height - 1; y >= 0; --y) {
 		for (int x = 0; x < width; ++x) {
-			// Ограничиваем значения 0-255 и конвертируем в uint8_t
+			// ГЋГЈГ°Г Г­ГЁГ·ГЁГўГ ГҐГ¬ Г§Г­Г Г·ГҐГ­ГЁГї 0-255 ГЁ ГЄГ®Г­ГўГҐГ°ГІГЁГ°ГіГҐГ¬ Гў uint8_t
 			uint8_t blue = static_cast<int16_t>(max(0.0, min(255.0, b[y][x])));
 			uint8_t green = static_cast<int16_t>(max(0.0, min(255.0, g[y][x])));
 			uint8_t red = static_cast<int16_t>(max(0.0, min(255.0, r[y][x])));
 
-			// Пиксель в формате BGR (не RGB!)
+			// ГЏГЁГЄГ±ГҐГ«Гј Гў ГґГ®Г°Г¬Г ГІГҐ BGR (Г­ГҐ RGB!)
 			file.put(blue);
 			file.put(green);
 			file.put(red);
 		}
-		// Записываем выравнивание, если нужно
+		// Г‡Г ГЇГЁГ±Г»ГўГ ГҐГ¬ ГўГ»Г°Г ГўГ­ГЁГўГ Г­ГЁГҐ, ГҐГ±Г«ГЁ Г­ГіГ¦Г­Г®
 		if (padding > 0) {
 			file.write(reinterpret_cast<const char*>(padBytes), padding);
 		}
@@ -1077,8 +1077,8 @@ bool writeBMP(const string& filename, const inputArray& r, const inputArray& g, 
 }
 
 inputArray downsample(int height, int width, const inputArray& c) {
-	//булево значение, определяет нечётное ли число или нет
-	bool odd_h = height % 2 != 0;//0 - нет, 1 - да, нечётное
+	//ГЎГіГ«ГҐГўГ® Г§Г­Г Г·ГҐГ­ГЁГҐ, Г®ГЇГ°ГҐГ¤ГҐГ«ГїГҐГІ Г­ГҐГ·ВёГІГ­Г®ГҐ Г«ГЁ Г·ГЁГ±Г«Г® ГЁГ«ГЁ Г­ГҐГІ
+	bool odd_h = height % 2 != 0;//0 - Г­ГҐГІ, 1 - Г¤Г , Г­ГҐГ·ВёГІГ­Г®ГҐ
 	bool odd_w = width % 2 != 0;
 
 	inputArray downsampled(divUp(height, 2), vector<int16_t>(divUp(width, 2), 0));
@@ -1086,7 +1086,7 @@ inputArray downsample(int height, int width, const inputArray& c) {
 	for (size_t y = 0, h = 0; h < height - odd_h; y++, h += 2)
 	{
 		for (size_t x = 0, w = 0; w < width - odd_h; x++, w += 2)
-		{// среднее арифметическое
+		{// Г±Г°ГҐГ¤Г­ГҐГҐ Г Г°ГЁГґГ¬ГҐГІГЁГ·ГҐГ±ГЄГ®ГҐ
 			int arithmetic_mean = (c[h][w] + c[h][w + 1]
 				+ c[h + 1][w] + c[h + 1][w + 1]) / 4;
 			downsampled[y][x] = arithmetic_mean;
@@ -1094,10 +1094,10 @@ inputArray downsample(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_w)
-	{// правый край
-		// индексы правых краёв
+	{// ГЇГ°Г ГўГ»Г© ГЄГ°Г Г©
+		// ГЁГ­Г¤ГҐГЄГ±Г» ГЇГ°Г ГўГ»Гµ ГЄГ°Г ВёГў
 		int w = width - 1;// const
-		int x = width / 2;// width нечётное
+		int x = width / 2;// width Г­ГҐГ·ВёГІГ­Г®ГҐ
 		for (size_t y = 0, h = 0; h < height - odd_h; y++, h += 2)
 		{
 			int arithmetic_mean
@@ -1108,10 +1108,10 @@ inputArray downsample(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_h)
-	{// нижний край
-		// индексы нижних краёв
+	{// Г­ГЁГ¦Г­ГЁГ© ГЄГ°Г Г©
+		// ГЁГ­Г¤ГҐГЄГ±Г» Г­ГЁГ¦Г­ГЁГµ ГЄГ°Г ВёГў
 		int h = height - 1;// const
-		int y = height / 2;// height нечётное
+		int y = height / 2;// height Г­ГҐГ·ВёГІГ­Г®ГҐ
 		for (size_t x = 0, w = 0; w < width - odd_w; x++, w += 2)
 		{
 			int arithmetic_mean
@@ -1122,12 +1122,12 @@ inputArray downsample(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_h + odd_w == 2)
-	{// уголок
+	{// ГіГЈГ®Г«Г®ГЄ
 		int w = width - 1;// const
 		int h = height - 1;// const
 
-		int y = height / 2;// height нечётное (разрешение/size - 1)
-		int x = width / 2;// width нечётное (разрешение/size - 1)
+		int y = height / 2;// height Г­ГҐГ·ВёГІГ­Г®ГҐ (Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ/size - 1)
+		int x = width / 2;// width Г­ГҐГ·ВёГІГ­Г®ГҐ (Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ/size - 1)
 		downsampled[y][x] = c[h][w];
 	}
 
@@ -1138,8 +1138,8 @@ inputArray upScale(int height, int width, const inputArray& c) {
 	inputArray up(height, vector<int16_t>(width));
 
 
-	//булево значение, определяет нечётное ли число или нет
-	bool odd_h = height % 2 != 0;//0 - нет, 1 - да, нечётное
+	//ГЎГіГ«ГҐГўГ® Г§Г­Г Г·ГҐГ­ГЁГҐ, Г®ГЇГ°ГҐГ¤ГҐГ«ГїГҐГІ Г­ГҐГ·ВёГІГ­Г®ГҐ Г«ГЁ Г·ГЁГ±Г«Г® ГЁГ«ГЁ Г­ГҐГІ
+	bool odd_h = height % 2 != 0;//0 - Г­ГҐГІ, 1 - Г¤Г , Г­ГҐГ·ВёГІГ­Г®ГҐ
 	bool odd_w = width % 2 != 0;
 
 	for (size_t y = 0, h = 0; y < height / 2; y++, h += 2)
@@ -1153,10 +1153,10 @@ inputArray upScale(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_w)
-	{// правый край
-		// индексы правых краёв
+	{// ГЇГ°Г ГўГ»Г© ГЄГ°Г Г©
+		// ГЁГ­Г¤ГҐГЄГ±Г» ГЇГ°Г ГўГ»Гµ ГЄГ°Г ВёГў
 		int w = width - 1;// const
-		int x = width / 2;// width нечётное
+		int x = width / 2;// width Г­ГҐГ·ВёГІГ­Г®ГҐ
 		for (size_t y = 0, h = 0; y < height / 2; y++, h += 2)
 		{
 			int Ycbcr_pixel = c[y][x];
@@ -1166,10 +1166,10 @@ inputArray upScale(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_h)
-	{// нижний край
-		// индексы нижних краёв
+	{// Г­ГЁГ¦Г­ГЁГ© ГЄГ°Г Г©
+		// ГЁГ­Г¤ГҐГЄГ±Г» Г­ГЁГ¦Г­ГЁГµ ГЄГ°Г ВёГў
 		int h = height - 1;// const
-		int y = height / 2;// height нечётное
+		int y = height / 2;// height Г­ГҐГ·ВёГІГ­Г®ГҐ
 		for (size_t x = 0, w = 0; x < width / 2; x++, w += 2)
 		{
 			int Ycbcr_pixel = c[y][x];
@@ -1178,12 +1178,12 @@ inputArray upScale(int height, int width, const inputArray& c) {
 	}
 
 	if (odd_h + odd_w == 2)
-	{// уголок
+	{// ГіГЈГ®Г«Г®ГЄ
 		int w = width - 1;// const
 		int h = height - 1;// const
 
-		int y = height / 2;// height нечётное (разрешение/size - 1)
-		int x = width / 2;// width нечётное (разрешение/size - 1)
+		int y = height / 2;// height Г­ГҐГ·ВёГІГ­Г®ГҐ (Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ/size - 1)
+		int x = width / 2;// width Г­ГҐГ·ВёГІГ­Г®ГҐ (Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ/size - 1)
 		up[h][w] = c[y][x];
 	}
 
@@ -1191,10 +1191,10 @@ inputArray upScale(int height, int width, const inputArray& c) {
 }
 
 vector<i16_Block8x8> splitInto8x8Blocks(int height, int width, const inputArray& Y_Cb_Cr) {
-	vector<i16_Block8x8> BLOCKS;// двумерный массив блоков
+	vector<i16_Block8x8> BLOCKS;// Г¤ГўГіГ¬ГҐГ°Г­Г»Г© Г¬Г Г±Г±ГЁГў ГЎГ«Г®ГЄГ®Гў
 
-	// Проходим по изображению с шагом 8х8
-	//i - строки, j - столбцы
+	// ГЏГ°Г®ГµГ®Г¤ГЁГ¬ ГЇГ® ГЁГ§Г®ГЎГ°Г Г¦ГҐГ­ГЁГѕ Г± ГёГ ГЈГ®Г¬ 8Гµ8
+	//i - Г±ГІГ°Г®ГЄГЁ, j - Г±ГІГ®Г«ГЎГ¶Г»
 	for (size_t i = 0; i < height; i += 8) {
 		int Nt = 8;
 		if (height - i < 8) Nt = height - i;
@@ -1203,8 +1203,8 @@ vector<i16_Block8x8> splitInto8x8Blocks(int height, int width, const inputArray&
 			int M = 8;
 			if (width - j < 8) M = width - j;
 
-			// Копируем данные в блок 8х8
-			//bi - строки, bj - столбцы
+			// ГЉГ®ГЇГЁГ°ГіГҐГ¬ Г¤Г Г­Г­Г»ГҐ Гў ГЎГ«Г®ГЄ 8Гµ8
+			//bi - Г±ГІГ°Г®ГЄГЁ, bj - Г±ГІГ®Г«ГЎГ¶Г»
 			i16_Block8x8 block{};
 			for (size_t bi = 0; bi < Nt; bi++) {
 				for (size_t bj = 0; bj < M; bj++) {
@@ -1262,13 +1262,13 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 		// DC coeffs
 		if (str.substr(tmp, 2) == "00")
 		{
-			tmp += 2;// сдвигаем курсор
+			tmp += 2;// Г±Г¤ГўГЁГЈГ ГҐГ¬ ГЄГіГ°Г±Г®Г°
 			outp << tmp << '\n';
 		}
 		else
 		{
 			bool search = true;
-			int length = 2;// длина кода
+			int length = 2;// Г¤Г«ГЁГ­Г  ГЄГ®Г¤Г 
 
 			while (search)
 			{
@@ -1279,7 +1279,7 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 
 				string_view code(str.data() + tmp, length);
 
-				// поиск по таблице
+				// ГЇГ®ГЁГ±ГЄ ГЇГ® ГІГ ГЎГ«ГЁГ¶ГҐ
 				for (size_t d = 1; d < 12; d++)
 				{
 					if (length == DC[d].length())
@@ -1287,25 +1287,25 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 						if (code == DC[d])
 						{
 							search = false;
-							tmp += length;// сдвигаем курсор на кол. битов отведённых на код категории
+							tmp += length;// Г±Г¤ГўГЁГЈГ ГҐГ¬ ГЄГіГ°Г±Г®Г° Г­Г  ГЄГ®Г«. ГЎГЁГІГ®Гў Г®ГІГўГҐГ¤ВёГ­Г­Г»Гµ Г­Г  ГЄГ®Г¤ ГЄГ ГІГҐГЈГ®Г°ГЁГЁ
 							outp << tmp << '\n';
 
-							// перевод числа 2->10 систему счисления
+							// ГЇГҐГ°ГҐГўГ®Г¤ Г·ГЁГ±Г«Г  2->10 Г±ГЁГ±ГІГҐГ¬Гі Г±Г·ГЁГ±Г«ГҐГ­ГЁГї
 							string bits = str.substr(tmp, d);
 							int minus = 1;
 
 							if (bits[0] == '0')
 							{
 								for (char& c : bits)
-								{// char& — ссылка, меняет исходные данные
-									c ^= 1;// Инвертируем биты
+								{// char& В— Г±Г±Г»Г«ГЄГ , Г¬ГҐГ­ГїГҐГІ ГЁГ±ГµГ®Г¤Г­Г»ГҐ Г¤Г Г­Г­Г»ГҐ
+									c ^= 1;// Г€Г­ГўГҐГ°ГІГЁГ°ГіГҐГ¬ ГЎГЁГІГ»
 								}
 								minus = -1;
 							}
 
-							tmp += d;// сдвигаем курсор на кол. битов отведённых двоичное число
+							tmp += d;// Г±Г¤ГўГЁГЈГ ГҐГ¬ ГЄГіГ°Г±Г®Г° Г­Г  ГЄГ®Г«. ГЎГЁГІГ®Гў Г®ГІГўГҐГ¤ВёГ­Г­Г»Гµ Г¤ГўГ®ГЁГ·Г­Г®ГҐ Г·ГЁГ±Г«Г®
 							outp << tmp << '\n';
-							out[num_block][0] = minus * stoi(bits, nullptr, 2);// nullptr нужен просто, чтобы функция не сохраняла лишний раз pos, т.к. не нужен
+							out[num_block][0] = minus * stoi(bits, nullptr, 2);// nullptr Г­ГіГ¦ГҐГ­ ГЇГ°Г®Г±ГІГ®, Г·ГІГ®ГЎГ» ГґГіГ­ГЄГ¶ГЁГї Г­ГҐ Г±Г®ГµГ°Г Г­ГїГ«Г  Г«ГЁГёГ­ГЁГ© Г°Г Г§ pos, ГІ.ГЄ. Г­ГҐ Г­ГіГ¦ГҐГ­
 							break;
 						}
 					}
@@ -1320,13 +1320,13 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 
 		// AC coeffs
 		int EOB = false;
-		int count = 0;// count должен стоять на последнем записанном числе и никак иначе
+		int count = 0;// count Г¤Г®Г«Г¦ГҐГ­ Г±ГІГ®ГїГІГј Г­Г  ГЇГ®Г±Г«ГҐГ¤Г­ГҐГ¬ Г§Г ГЇГЁГ±Г Г­Г­Г®Г¬ Г·ГЁГ±Г«ГҐ ГЁ Г­ГЁГЄГ ГЄ ГЁГ­Г Г·ГҐ
 
-		// 63 это индекс последнего коэффициента массива
-		while (count != 63)// count никогда не будет больше > 63
+		// 63 ГЅГІГ® ГЁГ­Г¤ГҐГЄГ± ГЇГ®Г±Г«ГҐГ¤Г­ГҐГЈГ® ГЄГ®ГЅГґГґГЁГ¶ГЁГҐГ­ГІГ  Г¬Г Г±Г±ГЁГўГ 
+		while (count != 63)// count Г­ГЁГЄГ®ГЈГ¤Г  Г­ГҐ ГЎГіГ¤ГҐГІ ГЎГ®Г«ГјГёГҐ > 63
 		{
 			bool search = true;
-			int length = 2;// длина кода
+			int length = 2;// Г¤Г«ГЁГ­Г  ГЄГ®Г¤Г 
 
 			while (search)
 			{
@@ -1346,7 +1346,7 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 					break;
 				}
 
-				// поиск по таблице
+				// ГЇГ®ГЁГ±ГЄ ГЇГ® ГІГ ГЎГ«ГЁГ¶ГҐ
 				for (size_t a = 0; a < 16; a++)
 				{
 					for (size_t c = 0; c < 11; c++)
@@ -1356,9 +1356,9 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 							if (code == AC[a][c])
 							{
 								search = false;
-								tmp += length;// сдвигаем курсор на кол. битов отведённых на код (кол. нулей/категория)
+								tmp += length;// Г±Г¤ГўГЁГЈГ ГҐГ¬ ГЄГіГ°Г±Г®Г° Г­Г  ГЄГ®Г«. ГЎГЁГІГ®Гў Г®ГІГўГҐГ¤ВёГ­Г­Г»Гµ Г­Г  ГЄГ®Г¤ (ГЄГ®Г«. Г­ГіГ«ГҐГ©/ГЄГ ГІГҐГЈГ®Г°ГЁГї)
 								outp << tmp << '\n';
-								count += a;// прибавил количество нулей
+								count += a;// ГЇГ°ГЁГЎГ ГўГЁГ« ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г­ГіГ«ГҐГ©
 
 								if (a == 15 && c == 0)
 								{
@@ -1371,17 +1371,17 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 								if (bits[0] == '0')
 								{
 									for (char& c : bits)
-									{// char& — ссылка, меняет исходные данные
-										c ^= 1;// Инвертируем биты
+									{// char& В— Г±Г±Г»Г«ГЄГ , Г¬ГҐГ­ГїГҐГІ ГЁГ±ГµГ®Г¤Г­Г»ГҐ Г¤Г Г­Г­Г»ГҐ
+										c ^= 1;// Г€Г­ГўГҐГ°ГІГЁГ°ГіГҐГ¬ ГЎГЁГІГ»
 									}
 									minus = -1;
 								}
 
-								// перевод числа 2->10 систему счисления
-								tmp += c;// сдвигаем курсор на кол. битов отведённых двоичное число
+								// ГЇГҐГ°ГҐГўГ®Г¤ Г·ГЁГ±Г«Г  2->10 Г±ГЁГ±ГІГҐГ¬Гі Г±Г·ГЁГ±Г«ГҐГ­ГЁГї
+								tmp += c;// Г±Г¤ГўГЁГЈГ ГҐГ¬ ГЄГіГ°Г±Г®Г° Г­Г  ГЄГ®Г«. ГЎГЁГІГ®Гў Г®ГІГўГҐГ¤ВёГ­Г­Г»Гµ Г¤ГўГ®ГЁГ·Г­Г®ГҐ Г·ГЁГ±Г«Г®
 								outp << tmp << '\n';
 								count++;
-								out[num_block][count] = minus * stoi(bits, nullptr, 2);// nullptr нужен просто, чтобы функция не сохраняла лишний раз pos, т.к. не нужен
+								out[num_block][count] = minus * stoi(bits, nullptr, 2);// nullptr Г­ГіГ¦ГҐГ­ ГЇГ°Г®Г±ГІГ®, Г·ГІГ®ГЎГ» ГґГіГ­ГЄГ¶ГЁГї Г­ГҐ Г±Г®ГµГ°Г Г­ГїГ«Г  Г«ГЁГёГ­ГЁГ© Г°Г Г§ pos, ГІ.ГЄ. Г­ГҐ Г­ГіГ¦ГҐГ­
 								break;
 							}
 						}
@@ -1480,18 +1480,18 @@ int main() {
 		return 0;
 	}
 
-	ifT.seekg(0, ios::end);  // Перемещаем указатель в конец файла
-	auto size = ifT.tellg();       // Получаем позицию (размер файла)
-	ifT.seekg(0, ios::beg);   // Возвращаем указатель в начало
+	ifT.seekg(0, ios::end);  // ГЏГҐГ°ГҐГ¬ГҐГ№Г ГҐГ¬ ГіГЄГ Г§Г ГІГҐГ«Гј Гў ГЄГ®Г­ГҐГ¶ ГґГ Г©Г«Г 
+	auto size = ifT.tellg();       // ГЏГ®Г«ГіГ·Г ГҐГ¬ ГЇГ®Г§ГЁГ¶ГЁГѕ (Г°Г Г§Г¬ГҐГ° ГґГ Г©Г«Г )
+	ifT.seekg(0, ios::beg);   // Г‚Г®Г§ГўГ°Г Г№Г ГҐГ¬ ГіГЄГ Г§Г ГІГҐГ«Гј Гў Г­Г Г·Г Г«Г®
 	cout << "check size: " << size << '\n';
 	if (size != 3 * height * width)
 	{
 		cerr << "Error the resolution does not match the size: " << size << "\nResoult count: " << 3 * height * width << "\n";
 		return 0;
 	}
-	cout << "Параметры изображения:\n1) Размер: " << size << " байт\n";
-	cout << "2) Количество: " << size/3 << " pixels\n";
-	cout << "3) Разрешение: " << width << "x" << height << " байт\n";
+	cout << "ГЏГ Г°Г Г¬ГҐГІГ°Г» ГЁГ§Г®ГЎГ°Г Г¦ГҐГ­ГЁГї:\n1) ГђГ Г§Г¬ГҐГ°: " << size << " ГЎГ Г©ГІ\n";
+	cout << "2) ГЉГ®Г«ГЁГ·ГҐГ±ГІГўГ®: " << size/3 << " pixels\n";
+	cout << "3) ГђГ Г§Г°ГҐГёГҐГ­ГЁГҐ: " << width << "x" << height << " ГЎГ Г©ГІ\n";
 
 	inputArray r(height, vector<int16_t>(width));
 	inputArray g(height, vector<int16_t>(width));
@@ -1501,7 +1501,7 @@ int main() {
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
 			if (!ifT.read(reinterpret_cast<char*>(color), 3)) {
-				throw runtime_error("Ошибка чтения файла");
+				throw runtime_error("ГЋГёГЁГЎГЄГ  Г·ГІГҐГ­ГЁГї ГґГ Г©Г«Г ");
 			}
 			r[y][x] = color[0];
 			g[y][x] = color[1];
@@ -1520,13 +1520,13 @@ int main() {
 
 		rgb_to_ycbcr(height, width, r, g, b, Y, cb, cr);
 
-		//4:2:0 - берём по 1 цвету в двух блоках по 4 элемента
-		//цвет усреднённый среди 4 элементов
-		// переписать даунсэплинг чтобы сохранялась размерность массивов
+		//4:2:0 - ГЎГҐГ°ВёГ¬ ГЇГ® 1 Г¶ГўГҐГІГі Гў Г¤ГўГіГµ ГЎГ«Г®ГЄГ Гµ ГЇГ® 4 ГЅГ«ГҐГ¬ГҐГ­ГІГ 
+		//Г¶ГўГҐГІ ГіГ±Г°ГҐГ¤Г­ВёГ­Г­Г»Г© Г±Г°ГҐГ¤ГЁ 4 ГЅГ«ГҐГ¬ГҐГ­ГІГ®Гў
+		// ГЇГҐГ°ГҐГЇГЁГ±Г ГІГј Г¤Г ГіГ­Г±ГЅГЇГ«ГЁГ­ГЈ Г·ГІГ®ГЎГ» Г±Г®ГµГ°Г Г­ГїГ«Г Г±Гј Г°Г Г§Г¬ГҐГ°Г­Г®Г±ГІГј Г¬Г Г±Г±ГЁГўГ®Гў
 		cb = downsample(height, width, cb);
 		cr = downsample(height, width, cr);
 
-		// Разбиение на блоки и запись блоков в одномерном векторе
+		// ГђГ Г§ГЎГЁГҐГ­ГЁГҐ Г­Г  ГЎГ«Г®ГЄГЁ ГЁ Г§Г ГЇГЁГ±Гј ГЎГ«Г®ГЄГ®Гў Гў Г®Г¤Г­Г®Г¬ГҐГ°Г­Г®Г¬ ГўГҐГЄГІГ®Г°ГҐ
 		// i8_Block8x8
 		auto Y_blocks = splitInto8x8Blocks(height, width, Y);
 		auto cb_blocks = splitInto8x8Blocks(divUp(height, 2), divUp(width, 2), cb);
@@ -1543,28 +1543,28 @@ int main() {
 		cr_blocks = splitInto8x8Blocks(divUp(height, 2), divUp(width, 2), cr);
 
 		size_t sizeY_Bl8x8 = Y_blocks.size();
-		size_t sizeC_Bl8x8 = cb_blocks.size();// совпадает с cr_blocks.size()
+		size_t sizeC_Bl8x8 = cb_blocks.size();// Г±Г®ГўГЇГ Г¤Г ГҐГІ Г± cr_blocks.size()
 
 		d_Block8x8 q0_matrix{};
 		d_Block8x8 q1_matrix{};
 		generate_quantization_matrix(quality, q0_matrix, Luminance_quantization_table);
 		generate_quantization_matrix(quality, q1_matrix, Chrominance_quantization_table);
 
-		// квантование
+		// ГЄГўГ Г­ГІГ®ГўГ Г­ГЁГҐ
 		for (size_t x = 0; x < sizeY_Bl8x8; x++)
 		{// d_Block8x8
-			auto Y_dct = dct_2d_8x8(Y_blocks[x]);// запись обработанного через dct блок
-			quantize(Y_dct, q0_matrix, Y_blocks[x]);// запись в Y_blocks
+			auto Y_dct = dct_2d_8x8(Y_blocks[x]);// Г§Г ГЇГЁГ±Гј Г®ГЎГ°Г ГЎГ®ГІГ Г­Г­Г®ГЈГ® Г·ГҐГ°ГҐГ§ dct ГЎГ«Г®ГЄ
+			quantize(Y_dct, q0_matrix, Y_blocks[x]);// Г§Г ГЇГЁГ±Гј Гў Y_blocks
 		}
 		for (size_t x = 0; x < sizeC_Bl8x8; x++)
 		{// d_Block8x8
 			auto cb_dct = dct_2d_8x8(cb_blocks[x]);
 			auto cr_dct = dct_2d_8x8(cr_blocks[x]);
-			quantize(cb_dct, q1_matrix, cb_blocks[x]);// запись в cb_done
-			quantize(cr_dct, q1_matrix, cr_blocks[x]);// запись в cr_done
+			quantize(cb_dct, q1_matrix, cb_blocks[x]);// Г§Г ГЇГЁГ±Гј Гў cb_done
+			quantize(cr_dct, q1_matrix, cr_blocks[x]);// Г§Г ГЇГЁГ±Гј Гў cr_done
 		}
 
-		// Зиг-заг обход для каждого блока
+		// Г‡ГЁГЈ-Г§Г ГЈ Г®ГЎГµГ®Г¤ Г¤Г«Гї ГЄГ Г¦Г¤Г®ГЈГ® ГЎГ«Г®ГЄГ 
 		vector<int16_t> str1;
 		vector<int16_t> str2;
 		vector<int16_t> str3;
@@ -1573,9 +1573,9 @@ int main() {
 		str3.reserve(sizeC_Bl8x8 * 64);
 
 		cout << '\n';
-		cout << "кол. блоков Y: " << sizeY_Bl8x8 << '\n';
-		cout << "кол. блоков Cb: " << sizeC_Bl8x8 << '\n';
-		cout << "кол. блоков Cr: " << sizeC_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Y: " << sizeY_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Cb: " << sizeC_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Cr: " << sizeC_Bl8x8 << '\n';
 
 		for (size_t x = 0; x < sizeY_Bl8x8; x++)
 		{// Y
@@ -1615,18 +1615,18 @@ int main() {
 
 		vector<uint8_t> output = pack_bits_to_bytes(coder);
 
-		cout << "\n\nРазмер сжатых данных без метаданных:\n" << output.size() << " байт\nили\n" << output.size() / 1024 << "Кб\n\n";
+		cout << "\n\nГђГ Г§Г¬ГҐГ° Г±Г¦Г ГІГ»Гµ Г¤Г Г­Г­Г»Гµ ГЎГҐГ§ Г¬ГҐГІГ Г¤Г Г­Г­Г»Гµ:\n" << output.size() << " ГЎГ Г©ГІ\nГЁГ«ГЁ\n" << output.size() / 1024 << "ГЉГЎ\n\n";
 
-		// Запись в файл
+		// Г‡Г ГЇГЁГ±Гј Гў ГґГ Г©Г«
 
-		// запись таблиц
+		// Г§Г ГЇГЁГ±Гј ГІГ ГЎГ«ГЁГ¶
 
-		// запись сжатых данных
+		// Г§Г ГЇГЁГ±Гј Г±Г¦Г ГІГ»Гµ Г¤Г Г­Г­Г»Гµ
 		//ofstream ou("console.txt", ios::binary);
 		for (size_t i = 0; i < output.size(); i++)
 		{
-			char space = output[i];  // Байт в ASCII или просто обычный символ char
-			//ou.write(&space, sizeof(space));  // Записываем 1 байт и sizeof = 8 (const)
+			char space = output[i];  // ГЃГ Г©ГІ Гў ASCII ГЁГ«ГЁ ГЇГ°Г®Г±ГІГ® Г®ГЎГ»Г·Г­Г»Г© Г±ГЁГ¬ГўГ®Г« char
+			//ou.write(&space, sizeof(space));  // Г‡Г ГЇГЁГ±Г»ГўГ ГҐГ¬ 1 ГЎГ Г©ГІ ГЁ sizeof = 8 (const)
 		}
 		//ou.close();
 
@@ -1658,52 +1658,52 @@ int main() {
 		// decode
 
 		//
-		// ?*+$&^-ТОЕРИЯ-^&$+*?
+		// ?*+$&^-Г’ГЋГ…ГђГ€Гџ-^&$+*?
 		// 
-		// зная разрешение узнаем длину вектора блоков 8х8 у Y, Cb, Cr
+		// Г§Г­Г Гї Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ ГіГ§Г­Г ГҐГ¬ Г¤Г«ГЁГ­Гі ГўГҐГЄГІГ®Г°Г  ГЎГ«Г®ГЄГ®Гў 8Гµ8 Гі Y, Cb, Cr
 		// 
-		// пример 1.
-		// разрешение 800 x 600
+		// ГЇГ°ГЁГ¬ГҐГ° 1.
+		// Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ 800 x 600
 		// 
-		// яркость
-		// разбиение на блоки 8х8
+		// ГїГ°ГЄГ®Г±ГІГј
+		// Г°Г Г§ГЎГЁГҐГ­ГЁГҐ Г­Г  ГЎГ«Г®ГЄГЁ 8Гµ8
 		// 800 / 8 = 100
 		// 600 / 8 = 75
-		// все без остатка
-		// кол. блоков:
+		// ГўГ±ГҐ ГЎГҐГ§ Г®Г±ГІГ ГІГЄГ 
+		// ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў:
 		// 100 * 75 = 7500
 		// 
-		// цвет
-		// даунсэмплинг
+		// Г¶ГўГҐГІ
+		// Г¤Г ГіГ­Г±ГЅГ¬ГЇГ«ГЁГ­ГЈ
 		// 800 / 2 = 400
 		// 600 / 2 = 300
-		// все без остатка
-		// разбиение на блоки 8х8
+		// ГўГ±ГҐ ГЎГҐГ§ Г®Г±ГІГ ГІГЄГ 
+		// Г°Г Г§ГЎГЁГҐГ­ГЁГҐ Г­Г  ГЎГ«Г®ГЄГЁ 8Гµ8
 		// 400 / 8 = 50
 		// 300 / 8 = 37,5
-		// округлим 37,5 -> 38
-		// кол. блоков:
+		// Г®ГЄГ°ГіГЈГ«ГЁГ¬ 37,5 -> 38
+		// ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў:
 		// 50 * 38 = 1900
 		// 
-		// приемр 2.
-		// разрешение 803 х 607
+		// ГЇГ°ГЁГҐГ¬Г° 2.
+		// Г°Г Г§Г°ГҐГёГҐГ­ГЁГҐ 803 Гµ 607
 		// 
-		// яркость
-		// разбиение на блоки 8х8
+		// ГїГ°ГЄГ®Г±ГІГј
+		// Г°Г Г§ГЎГЁГҐГ­ГЁГҐ Г­Г  ГЎГ«Г®ГЄГЁ 8Гµ8
 		// divUp(803, 8) = 101
 		// divUp(607, 8) = 76
-		// все имеют остатки, поэтому округлил
-		// кол. блоков:
+		// ГўГ±ГҐ ГЁГ¬ГҐГѕГІ Г®Г±ГІГ ГІГЄГЁ, ГЇГ®ГЅГІГ®Г¬Гі Г®ГЄГ°ГіГЈГ«ГЁГ«
+		// ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў:
 		// 101 * 76 = 7676
 		// 
-		// цвет
-		// даунсэмплинг
+		// Г¶ГўГҐГІ
+		// Г¤Г ГіГ­Г±ГЅГ¬ГЇГ«ГЁГ­ГЈ
 		// divUp(803, 2) = 402
 		// divUp(607, 2) = 304
-		// разбиение на блоки 8х8
+		// Г°Г Г§ГЎГЁГҐГ­ГЁГҐ Г­Г  ГЎГ«Г®ГЄГЁ 8Гµ8
 		// divUp(402, 8) = 51
-		// divUp(304, 8) = 38 - без остатка
-		// кол. блоков:
+		// divUp(304, 8) = 38 - ГЎГҐГ§ Г®Г±ГІГ ГІГЄГ 
+		// ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў:
 		// 51 * 38 = 1938
 		//
 
@@ -1717,7 +1717,7 @@ int main() {
 		vector<i16_Block8x8> vecCr_Bl8x8(sizeC_Bl8x8);
 
 		//
-		// пример того как выглядит готовый HA, но нули и категории не закодированы
+		// ГЇГ°ГЁГ¬ГҐГ° ГІГ®ГЈГ® ГЄГ ГЄ ГўГ»ГЈГ«ГїГ¤ГЁГІ ГЈГ®ГІГ®ГўГ»Г© HA, Г­Г® Г­ГіГ«ГЁ ГЁ ГЄГ ГІГҐГЈГ®Г°ГЁГЁ Г­ГҐ Г§Г ГЄГ®Г¤ГЁГ°Г®ГўГ Г­Г»
 		// DC 3 010 AC:
 		// 1) 1 1 0
 		// 3) 0 2 10
@@ -1746,35 +1746,35 @@ int main() {
 		// 50) 7 1 1
 		// 58) 2 1 1
 		// 61) 2 1 0
-		// всего 64 числа
+		// ГўГ±ГҐГЈГ® 64 Г·ГЁГ±Г«Г 
 		// 
-		// должны получить это
+		// Г¤Г®Г«Г¦Г­Г» ГЇГ®Г«ГіГ·ГЁГІГј ГЅГІГ®
 		// -5 0 - 1 2 0 2 1 0 1 0 - 2 2 - 2 - 1 0 0 0 0 0 - 1 - 1 1 0 0 0 0 - 1 1 0 - 1 0 1 0 1 0 1 0 0 0 - 1 1 0 0 - 1 - 1 - 1 0 0 0 - 1 0 0 0 0 0 0 0 1 0 0 1 0 0 - 1
 		// 
-		// обратный zig-zag
-		// возвращать будем по блоку
+		// Г®ГЎГ°Г ГІГ­Г»Г© zig-zag
+		// ГўГ®Г§ГўГ°Г Г№Г ГІГј ГЎГіГ¤ГҐГ¬ ГЇГ® ГЎГ«Г®ГЄГі
 		//
 
-		// векторы блоков
+		// ГўГҐГЄГІГ®Г°Г» ГЎГ«Г®ГЄГ®Гў
 		vector<array<int16_t, 64>> strY(sizeY_Bl8x8);
 		vector<array<int16_t, 64>> strCb(sizeC_Bl8x8);
 		vector<array<int16_t, 64>> strCr(sizeC_Bl8x8);
 
 		cout << '\n';
-		cout << "кол. блоков Y: " << sizeY_Bl8x8 << '\n';
-		cout << "кол. блоков Cb: " << sizeC_Bl8x8 << '\n';
-		cout << "кол. блоков Cr: " << sizeC_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Y: " << sizeY_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Cb: " << sizeC_Bl8x8 << '\n';
+		cout << "ГЄГ®Г«. ГЎГ«Г®ГЄГ®Гў Cr: " << sizeC_Bl8x8 << '\n';
 
 		//sizeC_Bl8x8
-		// Раскодируем категории DC и получим количество бит числа
-		// Переведём двичное число в десятичное (обозначение: перевод числа 2->10)
-		// Раскодируем кол. нулей/категорию AC и получим количество нулей и бит числа
-		// Перевод числа 2->10
-		// Count для проверки, что ровно 64 цифры записали
-		// Переход к следующему блоку
+		// ГђГ Г±ГЄГ®Г¤ГЁГ°ГіГҐГ¬ ГЄГ ГІГҐГЈГ®Г°ГЁГЁ DC ГЁ ГЇГ®Г«ГіГ·ГЁГ¬ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® ГЎГЁГІ Г·ГЁГ±Г«Г 
+		// ГЏГҐГ°ГҐГўГҐГ¤ВёГ¬ Г¤ГўГЁГ·Г­Г®ГҐ Г·ГЁГ±Г«Г® Гў Г¤ГҐГ±ГїГІГЁГ·Г­Г®ГҐ (Г®ГЎГ®Г§Г­Г Г·ГҐГ­ГЁГҐ: ГЇГҐГ°ГҐГўГ®Г¤ Г·ГЁГ±Г«Г  2->10)
+		// ГђГ Г±ГЄГ®Г¤ГЁГ°ГіГҐГ¬ ГЄГ®Г«. Г­ГіГ«ГҐГ©/ГЄГ ГІГҐГЈГ®Г°ГЁГѕ AC ГЁ ГЇГ®Г«ГіГ·ГЁГ¬ ГЄГ®Г«ГЁГ·ГҐГ±ГІГўГ® Г­ГіГ«ГҐГ© ГЁ ГЎГЁГІ Г·ГЁГ±Г«Г 
+		// ГЏГҐГ°ГҐГўГ®Г¤ Г·ГЁГ±Г«Г  2->10
+		// Count Г¤Г«Гї ГЇГ°Г®ГўГҐГ°ГЄГЁ, Г·ГІГ® Г°Г®ГўГ­Г® 64 Г¶ГЁГґГ°Г» Г§Г ГЇГЁГ±Г Г«ГЁ
+		// ГЏГҐГ°ГҐГµГ®Г¤ ГЄ Г±Г«ГҐГ¤ГіГѕГ№ГҐГ¬Гі ГЎГ«Г®ГЄГі
 		//
 
-		// Бинарное чтение из файла
+		// ГЃГЁГ­Г Г°Г­Г®ГҐ Г·ГІГҐГ­ГЁГҐ ГЁГ§ ГґГ Г©Г«Г 
 		vector<uint8_t> out2(output.size());
 		ifstream in("console.txt", ios::binary);
 		for (size_t i = 0; i < out2.size(); i++)
@@ -1783,7 +1783,7 @@ int main() {
 		}
 		in.close();
 
-		// Из out2 создадим битовую строку
+		// Г€Г§ out2 Г±Г®Г§Г¤Г Г¤ГЁГ¬ ГЎГЁГІГ®ГўГіГѕ Г±ГІГ°Г®ГЄГі
 		size = output.size();
 		string str = "";
 		for (uint8_t byte : output)
@@ -1806,7 +1806,7 @@ int main() {
 
 		bool ok = true;// check JPEG decoder
 
-		// Обратный зиг-заг обход для всех блоков
+		// ГЋГЎГ°Г ГІГ­Г»Г© Г§ГЁГЈ-Г§Г ГЈ Г®ГЎГµГ®Г¤ Г¤Г«Гї ГўГ±ГҐГµ ГЎГ«Г®ГЄГ®Гў
 		for (size_t i = 0; i < sizeY_Bl8x8; i++)
 		{// Y
 			vecY_Bl8x8[i] = inverse_zigzag_scan(strY[i]);
@@ -1854,12 +1854,12 @@ int main() {
 
 		ycbcr_to_rgb(height, width, r2, g2, b2, Y2, cb2, cr2);
 
-		link = "C:/Users/lin/Desktop/4 семестр/АиСД 4сем/Лаба 2 картинки/" + name + '/' + name + "_D_" + to_string(quality) + ".bmp";
+		link = "C:/Users/lin/Desktop/4 Г±ГҐГ¬ГҐГ±ГІГ°/ГЂГЁГ‘Г„ 4Г±ГҐГ¬/Г‹Г ГЎГ  2 ГЄГ Г°ГІГЁГ­ГЄГЁ/" + name + '/' + name + "_D_" + to_string(quality) + ".bmp";
 		writeBMP(link, r2, g2, b2, width, height);
 
 		if (original)
 		{
-			link = "C:/Users/lin/Desktop/4 семестр/АиСД 4сем/Лаба 2 картинки/" + name + '/' + name + "_Orig.bmp";
+			link = "C:/Users/lin/Desktop/4 Г±ГҐГ¬ГҐГ±ГІГ°/ГЂГЁГ‘Г„ 4Г±ГҐГ¬/Г‹Г ГЎГ  2 ГЄГ Г°ГІГЁГ­ГЄГЁ/" + name + '/' + name + "_Orig.bmp";
 			writeBMP(link, r, g, b, width, height);
 		}
 	}
