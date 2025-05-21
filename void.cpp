@@ -54,7 +54,8 @@ void rgb_to_ycbcr(int height, int width
 
 void ycbcr_to_rgb(int height, int width
 	, inputArray& R, inputArray& G, inputArray& B
-	, const inputArray& Y, const inputArray& cb, const inputArray& cr) {
+	, const inputArray& Y, const inputArray& cb, const inputArray& cr
+	, const double RG[3][3]) {
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
@@ -62,9 +63,9 @@ void ycbcr_to_rgb(int height, int width
 			double cb_val = cb[y][x] - 128;
 			double cr_val = cr[y][x] - 128;
 
-			double r = y_val + 1.402 * cr_val;
-			double g = y_val - 0.344136 * cb_val - 0.714136 * cr_val;
-			double b = y_val + 1.772 * cb_val;
+			double r = RG[0][0] * y_val + RG[0][1] * cb_val + RG[0][2] * cr_val;
+			double g = RG[1][0] * y_val + RG[1][1] * cb_val + RG[1][2] * cr_val;
+			double b = RG[2][0] * y_val + RG[2][1] * cb_val + RG[2][2] * cr_val;
 
 			R[y][x] = static_cast<int16_t>(max(0.0, min(255.0, r)));
 			G[y][x] = static_cast<int16_t>(max(0.0, min(255.0, g)));
@@ -131,7 +132,7 @@ d_Block8x8 dct_2d_8x8(const i16_Block8x8& block) {
 	for (int y = 0; y < N; y++) {
 		array<double, N> row;
 		for (int x = 0; x < N; x++) {
-			row[x] = block[y][x];
+			row[x] = block[y][x] - 128;
 		}
 		array<double, N> dct_row{};
 		dct_1d(row, dct_row);
@@ -195,7 +196,7 @@ i16_Block8x8 idct_2d_8x8(const d_Block8x8& coeffs) {
 		array<double, N> idct_row{};
 		idct_1d(row, idct_row);
 		for (int x = 0; x < N; x++) {
-			block[y][x] = static_cast<int16_t>(round(idct_row[x]));
+			block[y][x] = static_cast<int16_t>(round(idct_row[x])) + 128;
 		}
 	}
 
@@ -340,11 +341,6 @@ void reverse_dc_difference(vector<array<int16_t, 64>>& data) {
 // 9. ѕеременного кодировани€ разностей DC и AC коэффициентов.
 vector<int16_t> intToBinaryVector(int16_t num, int positive1_or_negative0 = 1/*вли€ет на биты, будут ли биты инвертивными*/) {
 	vector<int16_t> bits;
-
-	if (num == 0) {// это можно удалить по идеи
-		bits.push_back(0);
-		return bits;
-	}
 
 	if (positive1_or_negative0 == 0) num *= -1;
 
@@ -1392,8 +1388,7 @@ void JPEG_decode_HA_RLE(vector<array<int16_t, 64>>& out, string str, int size_Bl
 			}
 
 			if (EOB) break;
-		}
-	}
+}}
 	
 	outp.close();
 }
@@ -1508,9 +1503,7 @@ void read_quant_table(ifstream& in, int quant_table[8][8]) {
 			char sym;
 			in.read(&sym, 1);
 			quant_table[i][u] = sym;
-		}
-	}
-}
+}}}
 
 void check(int& cursor, ifstream& in, bitset<8>& bits) {
 	if (cursor < 0)
@@ -1519,31 +1512,35 @@ void check(int& cursor, ifstream& in, bitset<8>& bits) {
 		char sym;
 		in.read(&sym, 1);
 		bits = bitset<8>(sym);
+}}
+
+string code(int& cursor, ifstream& in, bitset<8>& bits) {
+	int num = 0;
+	bits.to_string();
+
+	for (int i = 3; i >= 0; i--)
+	{
+		cursor--;
+		check(cursor, in, bits);
+		num += bits[cursor] << i;
 	}
+
+	int length = num + 1;// длина кода
+	string str;
+	for (size_t i = 0; i < length; i++)
+	{
+		cursor--;
+		check(cursor, in, bits);
+		str += bits[cursor] == 1 ? '1' : '0';
+	}
+
+	return str;
 }
 
 void read_DC_coeff(ifstream& in, int& cursor, bitset<8>& bits, string DC[12]) {
 	for (int count = 0; count < 12; count++)
 	{
-		int num = 0;
-
-		for (int i = 3; i >= 0; i--)
-		{
-			cursor--;
-			check(cursor, in, bits);
-			num += bits[cursor] << i;
-		}
-
-		int length = num + 1;// длина кода
-		string str;
-		for (size_t i = 0; i < length; i++)
-		{
-			cursor--;
-			check(cursor, in, bits);
-			str += bits[cursor] == 1 ? '1' : '0';
-		}
-
-		DC[count] = str;
+		DC[count] = code(cursor, in, bits);
 	}
 }
 
@@ -1551,29 +1548,11 @@ void read_AC_coeff(ifstream& in, int& cursor, bitset<8>& bits, string AC[16][11]
 	int f = 0;
 
 	for (size_t t = 0; t < 2; t++)
-	{
-		int num = 0;
-
-		for (int i = 3; i >= 0; i--)
-		{
-			cursor--;
-			check(cursor, in, bits);
-			num += bits[cursor] << i;
-		}
-
-		int length = num + 1;// длина кода
-		string str;
-		for (size_t i = 0; i < length; i++)
-		{
-			cursor--;
-			check(cursor, in, bits);
-			str += bits[cursor] == 1 ? '1' : '0';
-		}
-
-		AC[f][0] = str;
+	{//EOB ZRL
+		AC[f][0] = code(cursor, in, bits);
 		f = 15;
 	}
-	for (int count = 1; count < 15; count++)
+	for (int count = 1; count <= 14; count++)
 	{
 		AC[count][0] = "";
 	}
@@ -1582,25 +1561,7 @@ void read_AC_coeff(ifstream& in, int& cursor, bitset<8>& bits, string AC[16][11]
 	{
 		for (size_t cnt = 1; cnt < 11; cnt++)
 		{
-			int num = 0;
-
-			for (int i = 3; i >= 0; i--)
-			{
-				cursor--;
-				check(cursor, in, bits);
-				num += bits[cursor] << i;
-			}
-
-			int length = num + 1;// длина кода
-			string str;
-			for (size_t i = 0; i < length; i++)
-			{
-				cursor--;
-				check(cursor, in, bits);
-				str += bits[cursor] == 1 ? '1' : '0';
-			}
-
-			AC[count][cnt] = str;
+			AC[count][cnt] = code(cursor, in, bits);
 		}
 	}
 }
@@ -1705,11 +1666,11 @@ int main() {
 	// forza - 2048 x 2048
 	//
 
-	string file = "Lenna.raw";
+	string file = "forza.raw";
 	bool original = 0;//1 - записываем оригинал фото в .bmp на диск, 0 - не записываем
 
-	int width = 512;//800 512 2048
-	int height = 512;//600 512 2048
+	int width = 2048;//800 512 2048
+	int height = 2048;//600 512 2048
 
 	int min_quality = 0;
 	int max_quality = 100;
@@ -1844,6 +1805,7 @@ int main() {
 
 		vector<uint8_t> output = pack_bits_to_bytes(coder);// байтова€ строка сжатых данных
 		coder = "";
+		// end encode
 
 
 
@@ -1908,9 +1870,9 @@ int main() {
 		}
 
 		int temp = 0;
-		JPEG_decode_HA_RLE(strY, str, sizeY_Bl8x8, Luminance_DC_differences, Luminance_AC, temp);
-		JPEG_decode_HA_RLE(strCb, str, sizeC_Bl8x8, Chrominance_DC_differences, Chrominance_AC, temp);
-		JPEG_decode_HA_RLE(strCr, str, sizeC_Bl8x8, Chrominance_DC_differences, Chrominance_AC, temp);
+		JPEG_decode_HA_RLE(strY, str, sizeY_Bl8x8, Lumin_DC, Lumin_AC, temp);
+		JPEG_decode_HA_RLE(strCb, str, sizeC_Bl8x8, Chrom_DC, Chrom_AC, temp);
+		JPEG_decode_HA_RLE(strCr, str, sizeC_Bl8x8, Chrom_DC, Chrom_AC, temp);
 
 		reverse_dc_difference(strY);
 		reverse_dc_difference(strCb);
@@ -1934,15 +1896,20 @@ int main() {
 		vector<i16_Block8x8> aCb(sizeC_Bl8x8);
 		vector<i16_Block8x8> aCr(sizeC_Bl8x8);
 
+		d_Block8x8 q0_2matrix{};
+		d_Block8x8 q1_2matrix{};
+		generate_quantization_matrix(quality, q0_2matrix, Lumin_QT);
+		generate_quantization_matrix(quality, q1_2matrix, Chrom_QT);
+
 		for (size_t x = 0; x < sizeY_Bl8x8; x++)
 		{
-			d_Block8x8 doub_Y = dequantize(vecY_Bl8x8[x], q0_matrix);
+			d_Block8x8 doub_Y = dequantize(vecY_Bl8x8[x], q0_2matrix);
 			aY[x] = idct_2d_8x8(doub_Y);
 		}
 		for (size_t x = 0; x < sizeC_Bl8x8; x++)
 		{
-			d_Block8x8 doub_Cb = dequantize(vecCb_Bl8x8[x], q1_matrix);
-			d_Block8x8 doub_Cr = dequantize(vecCr_Bl8x8[x], q1_matrix);
+			d_Block8x8 doub_Cb = dequantize(vecCb_Bl8x8[x], q1_2matrix);
+			d_Block8x8 doub_Cr = dequantize(vecCr_Bl8x8[x], q1_2matrix);
 			aCb[x] = idct_2d_8x8(doub_Cb);
 			aCr[x] = idct_2d_8x8(doub_Cr);
 		}
@@ -1960,7 +1927,8 @@ int main() {
 
 		ycbcr_to_rgb(height, width
 			, r2, g2, b2
-			, Y2, cb2, cr2);
+			, Y2, cb2, cr2
+			, RG);
 
 		link = "C:/Users/lin/Desktop/4 семестр/ји—ƒ 4сем/Ћаба 2 картинки/" + name + '/' + name + "_D_" + to_string(quality) + ".bmp";
 		writeBMP(link, r2, g2, b2, width, height);
