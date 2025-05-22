@@ -1592,13 +1592,12 @@ string read_compressed_data(ifstream& in) {
 	return str;
 }
 
-string reading_the_compressed_file(string link
+string reading_the_compressed_file(ifstream& in
 	, int& width, int& height, int& quality
 	, int Lumin_QT[8][8], int Chrom_QT[8][8]
 	, string_view L_DC[12], string_view C_DC[12]
 	, string_view L_AC[16][11], string_view C_AC[16][11],
 	double RG[3][3]) {
-	ifstream in(link, ios::binary);
 
 	read_quant_table(in, Lumin_QT);
 	read_quant_table(in, Chrom_QT);
@@ -1633,7 +1632,6 @@ string reading_the_compressed_file(string link
 
 	string str = read_compressed_data(in);
 
-	in.close();
 	return str;
 }
 
@@ -1657,20 +1655,24 @@ int main() {
 	setlocale(LC_ALL, "ru");
 	SetConsoleOutputCP(CP_UTF8);
 
-	// images
-	// grey 800 x 600 (width x height)
-	// test8 8 x 8
-	// test16 16 x 16
-	// test32 32 x 31
+	// images (width x height)
+	// 
 	// Lenna - 512 x 512
+	// Lenna_gs
+	// Lenna_bw_dizering
+	// Lenna_bw
+	// 
 	// forza - 2048 x 2048
+	// forza_gs
+	// forza_bw_dizering
+	// forza_bw
 	//
 
-	string file = "forza.raw";
-	bool original = 0;//1 - записываем оригинал фото в .bmp на диск, 0 - не записываем
+	string file = "forza_bw_dizering.raw";
+	bool original = 1;//1 - записываем оригинал фото в .bmp на диск, 0 - не записываем
 
-	int width = 2048;//800 512 2048
-	int height = 2048;//600 512 2048
+	int width = 2048;//512 2048
+	int height = 2048;//512 2048
 
 	int min_quality = 0;
 	int max_quality = 100;
@@ -1690,28 +1692,55 @@ int main() {
 	auto size = ifT.tellg();       // Получаем позицию (размер файла)
 	ifT.seekg(0, ios::beg);   // Возвращаем указатель в начало
 	cout << "check size: " << size << '\n';
+	int components = 3;
 	if (size != 3 * height * width)
 	{
-		cerr << "Error the resolution does not match the size: " << size << "\nResoult count: " << 3 * height * width << "\n";
-		return 0;
+		components = 1;
+		if (size != height * width)
+		{
+			cerr << "Error the resolution does not match the size: " << size << "\nResoult count: " << 3 * height * width << "\n";
+			return 0;
+		}
 	}
 	cout << "Параметры изображения:\n1) Размер: " << size << " байт\n";
 	cout << "2) Количество: " << size/3 << " pixels\n";
 	cout << "3) Разрешение: " << width << "x" << height << " байт\n";
+	if (components == 3)
+	{
+		cout << "4) Тип: трёхкомпонентный\n";
+	}
+	else
+	{
+		cout << "4) Тип: однокомпонентный\n";
+	}
 
 	inputArray r(height, vector<int16_t>(width));
 	inputArray g(height, vector<int16_t>(width));
 	inputArray b(height, vector<int16_t>(width));
-
-	uint8_t color[3];
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			if (!ifT.read(reinterpret_cast<char*>(color), 3)) {
-				throw runtime_error("Ошибка чтения файла");
+	if (components == 3)
+	{
+		uint8_t color[3];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (!ifT.read(reinterpret_cast<char*>(color), 3)) {
+					throw runtime_error("Ошибка чтения файла");
+				}
+				r[y][x] = color[0];
+				g[y][x] = color[1];
+				b[y][x] = color[2];
 			}
-			r[y][x] = color[0];
-			g[y][x] = color[1];
-			b[y][x] = color[2];
+		}
+	}
+	else if (components == 1)
+	{
+		uint8_t color;
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				if (!ifT.read(reinterpret_cast<char*>(&color), 1)) {
+					throw runtime_error("Ошибка чтения файла");
+				}
+				r[y][x] = g[y][x] = b[y][x] = color;
+			}
 		}
 	}
 	
@@ -1818,7 +1847,7 @@ int main() {
 		width = height = quality = 0;
 		ifstream file(link, ios::binary | ios::ate);
 		streampos fileSize = file.tellg();
-		cout << "\n\nРазмер сжатых данных без метаданных:\n" << fileSize << " байт\nили\n" << fileSize / 1024 << "Кб\n\n";
+		cout << "\n\nРазмер сжатых данных:\n" << fileSize << " байт\nили\n" << fileSize / 1024 << "Кб\n\n";
 		file.close();
 
 		// Считывание из файла метаданных
@@ -1829,12 +1858,23 @@ int main() {
 		string_view Lumin_AC[16][11];
 		string_view Chrom_AC[16][11];
 		double RG[3][3];
-		string str = reading_the_compressed_file(link
-			, width, height, quality
-			, Lumin_QT, Chrom_QT
-			, Lumin_DC, Chrom_DC
-			, Lumin_AC, Chrom_AC
-			, RG);
+		string str;
+		ifstream in(link, ios::binary);
+		if (in.is_open())
+		{
+			str = reading_the_compressed_file(in
+				, width, height, quality
+				, Lumin_QT, Chrom_QT
+				, Lumin_DC, Chrom_DC
+				, Lumin_AC, Chrom_AC
+				, RG);
+		}
+		else
+		{
+			cerr << "Error opening file for decoding";
+			return 0;
+		}
+		in.close();
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -1932,12 +1972,12 @@ int main() {
 
 		link = "C:/Users/lin/Desktop/4 семестр/АиСД 4сем/Лаба 2 картинки/" + name + '/' + name + "_D_" + to_string(quality) + ".bmp";
 		writeBMP(link, r2, g2, b2, width, height);
+	}
 
-		if (original)
-		{
-			link = "C:/Users/lin/Desktop/4 семестр/АиСД 4сем/Лаба 2 картинки/" + name + '/' + name + "_Orig.bmp";
-			writeBMP(link, r, g, b, width, height);
-		}
+	if (original)
+	{
+		link = "C:/Users/lin/Desktop/4 семестр/АиСД 4сем/Лаба 2 картинки/" + name + '/' + name + "_Orig.bmp";
+		writeBMP(link, r, g, b, width, height);
 	}
 
 	cout << "Done!!!";
